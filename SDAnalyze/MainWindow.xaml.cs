@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows.Input;
 using System;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -25,7 +26,6 @@ namespace SDAnalyze
         {
             InitializeComponent();
             ChartSeries = new SeriesCollection();
-
 
             _SplashScreen.Show();                   
             this.Hide();
@@ -66,8 +66,7 @@ namespace SDAnalyze
             {
                 ObservableCollection<TreeViewNode> objDirectories = new ObservableCollection<TreeViewNode>();
 
-                var directories = Directory.GetDirectories(RootDirectory);
-                foreach (var directory in directories)
+                foreach (var directory in Directory.EnumerateDirectories(RootDirectory, "*", SearchOption.TopDirectoryOnly))
                 {
                     objDirectories.Add(new TreeViewNode { Title = Path.GetFileName(directory), ChildNodes = GetDirectories(directory), DirectoryPath = directory });
                 }
@@ -79,8 +78,7 @@ namespace SDAnalyze
                 else
                 {
                     return null;
-                }
-                
+                }              
             }
             catch (Exception)
             {
@@ -94,14 +92,22 @@ namespace SDAnalyze
         /// <param name="RootDirectory"></param>
         private void AnalyzeSubDirectories(string RootDirectory)
         {
-            Dictionary<string, long> subDirectories = new Dictionary<string, long>();
+            //TODO: Get fucking chart to work
+            //ChartSeries.Clear();
 
-            var directories = Directory.GetDirectories(RootDirectory);
-            foreach (var directory in directories)
-            {
-                subDirectories.Add(Path.GetFileName(directory), AnalyzeDirectorySize(new DirectoryInfo(directory)));
-            }
+            //foreach (var directory in Directory.EnumerateDirectories(RootDirectory, "*", SearchOption.TopDirectoryOnly))
+            //{
+            //    var values = new ChartValues<ObservableValue> { new ObservableValue(GetDirectorySize(new DirectoryInfo(directory)) / 1024 / 1024) };
 
+            //    ChartSeries.Add(new PieSeries
+            //    {
+            //        Title = Path.GetFileName(directory),
+            //        Values = values,
+            //        DataLabels = true,
+            //    });
+            //}
+
+            //lvcChart.Update(true, true);
         }
 
         /// <summary>
@@ -109,22 +115,14 @@ namespace SDAnalyze
         /// </summary>
         /// <param name="DirInfo"></param>
         /// <returns></returns>
-        private long AnalyzeDirectorySize(DirectoryInfo DirInfo)
+        private long GetDirectorySize(DirectoryInfo DirInfo)
         {
             long size = 0;
 
             //Add the size of all files in current directory
-            var files = DirInfo.GetFiles();
-            foreach (var file in files)
+            foreach (var file in DirInfo.EnumerateFiles("*", SearchOption.AllDirectories))
             {
                 size += file.Length;
-            }
-
-            //Add the size of all files in sub directories
-            var subDirectories = DirInfo.GetDirectories();
-            foreach (var directory in subDirectories)
-            {
-                size += AnalyzeDirectorySize(DirInfo);
             }
             return size;
         }
@@ -144,7 +142,7 @@ namespace SDAnalyze
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnAnalyze_Click(object sender, RoutedEventArgs e)
+        private void BtnAnalyze_Click(object sender, RoutedEventArgs e)
         {
             if (tvView.SelectedItem == null)
             {
@@ -152,8 +150,9 @@ namespace SDAnalyze
             }
             else
             {
-                TreeViewNode currentNode = sender as TreeViewNode;
-                AnalyzeSubDirectories(currentNode.DirectoryPath);
+                this.Cursor = Cursors.Wait;
+                AnalyzeSubDirectories((tvView.SelectedItem as TreeViewNode).DirectoryPath);
+                this.Cursor = Cursors.Arrow;
             }
         }
     }

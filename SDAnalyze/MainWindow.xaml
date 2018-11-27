@@ -67,10 +67,10 @@
         </GroupBox>
 
         <GroupBox Grid.Row="0" Grid.Column="1" Header="Analysis" Foreground="{StaticResource ForegroundBrush}" Margin="1" BorderThickness="2" BorderBrush="{StaticResource ForegroundBrush}">
-            <lvc:PieChart LegendLocation="Bottom" Hoverable="True" DataClick="Chart_OnDataClick" InnerRadius="100"/>
+            <lvc:PieChart x:Name="lvcChart" LegendLocation="Bottom" Hoverable="True" DataClick="Chart_OnDataClick" InnerRadius="200" Series="{Binding ChartSeries}" DisableAnimations="True"/>
         </GroupBox>
 
-        <Button Grid.Column="0" Grid.Row="1" Content="Analyze" Foreground="{StaticResource ForegroundBrush}" Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource ForegroundBrush}" Click="btnAnalyze_Click"/>
+        <Button Grid.Column="0" Grid.Row="1" Content="Analyze" Foreground="{StaticResource ForegroundBrush}" Background="{StaticResource BackgroundBrush}" BorderThickness="1" BorderBrush="{StaticResource ForegroundBrush}" Click="BtnAnalyze_Click"/>
     </Grid>
 </Window>
 

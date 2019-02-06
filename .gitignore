@@ -1,0 +1,12 @@
+
+\.vs/SDAnalyze/v15/Server/sqlite3/storage\.ide
+
+*.exe
+
+*.pdb
+
+*.ide-wal
+
+*.ide-shm
+
+\.vs/SDAnalyze/v15/\.suo
